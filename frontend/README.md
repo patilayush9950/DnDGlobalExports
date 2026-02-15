@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DnD Global Exports - Premium Indian Exports
+
+A full-stack web application for an Indian agro-export business, built with Spring Boot (backend) and Next.js (frontend).
+
+## Tech Stack
+
+### Backend
+- **Framework**: Spring Boot 3.2.2
+- **Database**: H2 (development)
+- **Security**: Spring Security with JWT
+- **Build Tool**: Maven
+
+### Frontend
+- **Framework**: Next.js 15
+- **Styling**: Tailwind CSS
+- **HTTP Client**: Axios
+- **Language**: TypeScript
+
+## Project Structure
+
+```
+antigravity/
+├── backend/          # Spring Boot REST API
+│   └── src/
+│       └── main/
+│           ├── java/com/dndglobal/
+│           └── resources/
+└── frontend/         # Next.js application
+    └── src/
+        ├── app/
+        ├── components/
+        └── lib/
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- Maven 3.6+
+
+### Backend Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+# ensure Maven and the compiler use Java 17 (required)
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+
+# build and run
+mvn clean install
+mvn spring-boot:run
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The backend will start on `http://localhost:8080`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+### Frontend Setup
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The frontend will start on `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+- **Product Management**: CRUD operations for categories and products
+- **Admin Authentication**: Secure JWT-based authentication
+- **File Upload**: Image upload for products and categories
+- **Enquiry System**: Contact form for international buyers
+- **Static Pages**: Dynamic content management for About, Why Choose Us, etc.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Public Endpoints
+- `GET /api/categories` - List all categories
+- `GET /api/products` - List all products
+- `POST /api/enquiries` - Submit enquiry
+- `GET /api/static-pages/{pageName}` - Get static page content
+
+### Protected Endpoints (Admin)
+- `POST /api/auth/signin` - Admin login
+- `POST /api/categories` - Create category
+- `PUT /api/categories/{id}` - Update category
+- `DELETE /api/categories/{id}` - Delete category
+- Similar endpoints for products
+
+## Environment Variables
+
+### Backend
+Configure in `backend/src/main/resources/application.properties`
+
+### Frontend
+Create `.env.local` in the frontend directory:
+```
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
+
+## License
+
+MIT
