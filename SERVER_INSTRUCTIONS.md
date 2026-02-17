@@ -70,3 +70,56 @@ Runs on port `3000`.
 
 - **Database Locked:** If you see "Database may be already in use", ensure no other java process is running the backend. Stop it using `pkill -f eximroyals` or `pkill java`.
 - **Ports:** Ensure ports 8080 and 3000 are open in your server's firewall (AWS Security Groups / UFW).
+
+## 6. Configuring Domain (Nginx)
+
+To serve your app on `https://dndglobalexports.com`, use Nginx as a reverse proxy.
+
+### Install Nginx
+```bash
+sudo apt install nginx
+```
+
+### Configure Nginx
+Create a config file: `/etc/nginx/sites-available/dndglobalexports`
+
+```nginx
+server {
+    server_name dndglobalexports.com www.dndglobalexports.com;
+
+    # Frontend (Next.js)
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Backend API
+    location /api/ {
+        proxy_pass http://localhost:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Enable the site:
+```bash
+sudo ln -s /etc/nginx/sites-available/dndglobalexports /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### SSL (HTTPS)
+Use Certbot to get a free SSL certificate:
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d dndglobalexports.com -d www.dndglobalexports.com
+```
+
