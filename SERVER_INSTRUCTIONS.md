@@ -123,3 +123,63 @@ sudo apt install certbot python3-certbot-nginx
 sudo certbot --nginx -d dndglobalexports.com -d www.dndglobalexports.com
 ```
 
+## 7. Production Deployment (Systemd & PM2)
+
+Since you are using `systemd` and `pm2`, follow these steps to make your app run in the background and restart automatically.
+
+### Backend (Systemd)
+
+1.  **Build the JAR file:**
+    ```bash
+    cd backend
+    ./run_locally.sh  # Or: mvn clean package -DskipTests
+    ```
+    This creates `target/backend-0.0.1-SNAPSHOT.jar`.
+
+2.  **Create Service File:**
+    `sudo nano /etc/systemd/system/dnd-backend.service`
+
+    Paste the following (adjust paths if needed):
+
+    ```ini
+    [Unit]
+    Description=DnD Global Exports Backend
+    After=syslog.target network.target
+
+    [Service]
+    User=deploy
+    # Adjust path to your JAR file
+    WorkingDirectory=/var/dndglobal/DnDGlobalExports/backend
+    ExecStart=/usr/bin/java -jar target/backend-0.0.1-SNAPSHOT.jar
+    SuccessExitStatus=143
+    Restart=always
+    RestartSec=10
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+3.  **Start Service:**
+    ```bash
+    sudo systemctl daemon-reload
+    sudo systemctl enable dnd-backend
+    sudo systemctl start dnd-backend
+    sudo systemctl status dnd-backend
+    ```
+
+### Frontend (PM2)
+
+1.  **Build Frontend:**
+    ```bash
+    cd frontend
+    npm install
+    npm run build
+    ```
+
+2.  **Start with PM2:**
+    ```bash
+    pm2 start npm --name "dnd-frontend" -- start
+    pm2 save
+    ```
+
+
