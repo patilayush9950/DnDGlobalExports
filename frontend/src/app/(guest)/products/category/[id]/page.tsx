@@ -13,13 +13,14 @@ export default function CategoryProductsPage() {
     const [category, setCategory] = useState<any>(null);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
-    // Helper to get asset URL
     const getAssetUrl = (path: string) => {
         if (!path) return '';
         if (path.startsWith('http')) return path;
         const baseUrl = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
         return `${baseUrl}/uploads/${path}`;
     };
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
