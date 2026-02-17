@@ -28,8 +28,6 @@ export default function ProductListPage() {
         return `${baseUrl}/uploads/${path}`;
     };
 
-    const [loading, setLoading] = useState(true);
-
     const fetchProducts = async () => {
         try {
             const response = await api.get('/products');

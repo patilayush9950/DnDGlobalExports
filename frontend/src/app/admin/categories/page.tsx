@@ -15,6 +15,7 @@ interface Category {
 
 export default function CategoryListPage() {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     // Helper to get asset URL

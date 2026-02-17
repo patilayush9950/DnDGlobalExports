@@ -9,6 +9,7 @@ import { HoverEffect } from '@/components/ui/card-hover-effect';
 import { motion } from 'framer-motion';
 
 export default function Home() {
+    const [categories, setCategories] = useState<any[]>([]);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     // Helper to get asset URL
