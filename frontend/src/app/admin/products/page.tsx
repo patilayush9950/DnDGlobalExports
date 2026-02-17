@@ -18,6 +18,16 @@ interface Product {
 
 export default function ProductListPage() {
     const [products, setProducts] = useState<Product[]>([]);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+    // Helper to get asset URL
+    const getAssetUrl = (path: string) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseUrl = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
+        return `${baseUrl}/uploads/${path}`;
+    };
+
     const [loading, setLoading] = useState(true);
 
     const fetchProducts = async () => {
@@ -73,9 +83,9 @@ export default function ProductListPage() {
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     {product.imageUrl ? (
                                         <img
-                                            src={`http://localhost:8080/uploads/${product.imageUrl}`}
+                                            src={getAssetUrl(product.imageUrl)}
                                             alt={product.title}
-                                            className="h-10 w-10 rounded-full object-cover"
+                                            className="w-full h-full object-cover"
                                         />
                                     ) : (
                                         <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs text-center leading-none">No<br />Img</div>

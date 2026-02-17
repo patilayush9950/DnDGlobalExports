@@ -11,7 +11,15 @@ export default function CategoryProductsPage() {
 
     const [products, setProducts] = useState<any[]>([]);
     const [category, setCategory] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+    // Helper to get asset URL
+    const getAssetUrl = (path: string) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseUrl = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
+        return `${baseUrl}/uploads/${path}`;
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,7 +51,7 @@ export default function CategoryProductsPage() {
                 </div>
                 {/* Optional BG Image overlay if category has one */}
                 {category?.imageUrl && (
-                    <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: `url(http://localhost:8080/uploads/${encodeURIComponent(category.imageUrl)})` }}></div>
+                    <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{ backgroundImage: `url(${getAssetUrl(encodeURIComponent(category.imageUrl))})` }}></div>
                 )}
             </div>
 
@@ -56,7 +64,7 @@ export default function CategoryProductsPage() {
                             <div key={product.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition border border-gray-100 flex flex-col">
                                 <div className="h-64 overflow-hidden relative">
                                     {product.imageUrl ? (
-                                        <img src={`http://localhost:8080/uploads/${product.imageUrl}`} alt={product.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                                        <img src={getAssetUrl(product.imageUrl)} alt={product.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
                                     ) : (
                                         <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500">No Image</div>
                                     )}
@@ -71,7 +79,7 @@ export default function CategoryProductsPage() {
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-1 group-hover:translate-x-1 transition-transform"><path d="m9 18 6-6-6-6" /></svg>
                                         </Link>
                                         {product.pdfUrl && (
-                                            <a href={`http://localhost:8080/uploads/${product.pdfUrl}`} target="_blank" className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-200 transition">
+                                            <a href={getAssetUrl(product.pdfUrl)} target="_blank" className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs hover:bg-gray-200 transition">
                                                 Download PDF
                                             </a>
                                         )}

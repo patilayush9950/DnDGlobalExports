@@ -9,7 +9,15 @@ import { HoverEffect } from '@/components/ui/card-hover-effect';
 import { motion } from 'framer-motion';
 
 export default function Home() {
-    const [categories, setCategories] = useState<any[]>([]);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+    // Helper to get asset URL
+    const getAssetUrl = (path: string) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        const baseUrl = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
+        return `${baseUrl}/uploads/${path}`; // encodeURIComponent probably better but path might already have it or be simple
+    };
 
     useEffect(() => {
         // Fetch categories
@@ -120,7 +128,7 @@ export default function Home() {
                                     {/* Image with encoded URL fix */}
                                     <div
                                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                        style={{ backgroundImage: `url("http://localhost:8080/uploads/${encodeURIComponent(cat.imageUrl || '')}")` }}
+                                        style={{ backgroundImage: `url("${getAssetUrl(encodeURIComponent(cat.imageUrl || ''))}")` }}
                                     ></div>
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
@@ -168,7 +176,7 @@ export default function Home() {
                             <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
 
                             <img
-                                src="http://localhost:8080/uploads/why-choose-us.jpg"
+                                src={getAssetUrl('why-choose-us.jpg')}
                                 alt="Export quality inspection of Indian Spices"
                                 className="rounded-2xl shadow-2xl relative z-10 w-full object-cover"
                             />

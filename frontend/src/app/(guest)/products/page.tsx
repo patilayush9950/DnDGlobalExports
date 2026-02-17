@@ -6,13 +6,16 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { Search, ChevronRight } from 'lucide-react';
 
-export default function ProductsPage() {
+import { Suspense } from 'react';
+
+function ProductsContent() {
     const searchParams = useSearchParams();
     const searchQuery = searchParams.get('search');
     const [products, setProducts] = useState<any[]>([]);
     const [categories, setCategories] = useState<any[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('all');
     const [loading, setLoading] = useState(true);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,6 +44,23 @@ export default function ProductsPage() {
     const filteredProducts = selectedCategory === 'all'
         ? products
         : products.filter(p => p.category?.id?.toString() === selectedCategory);
+
+    // Helper to constructing full URL for assets
+    // If imageUrl starts with http, use it as is, otherwise prepend API_URL/uploads/
+    const getAssetUrl = (path: string) => {
+        if (!path) return '';
+        if (path.startsWith('http')) return path;
+        // Clean API_URL to ensure no double slash if it ends with /api
+        // But our .env.production has /api, so we need base URL. 
+        // Let's assume the uploads are served from the root context of backend usually.
+        // If NEXT_PUBLIC_API_URL is https://dnd.../api, we want https://dnd.../uploads
+        // A simple way is to use the hostname or just replace /api if present?
+        // Actually, let's keep it simple: assume uploads are available at the same host as API.
+
+        // If API_URL ends with /api, remove it to get base
+        const baseUrl = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
+        return `${baseUrl}/uploads/${encodeURIComponent(path)}`;
+    };
 
     return (
         <div className="bg-slate-50 min-h-screen py-16">
@@ -82,7 +102,7 @@ export default function ProductsPage() {
                             <div key={product.id} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group flex flex-col h-full card-hover">
                                 <div className="h-64 overflow-hidden relative">
                                     {product.imageUrl ? (
-                                        <img src={`http://localhost:8080/uploads/${encodeURIComponent(product.imageUrl)}`} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                        <img src={getAssetUrl(product.imageUrl)} alt={product.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
                                     )}
@@ -100,7 +120,7 @@ export default function ProductsPage() {
                                             Enquire Now <ChevronRight size={16} className="ml-1 group-hover/link:translate-x-1 transition-transform" />
                                         </Link>
                                         {product.pdfUrl && (
-                                            <a href={`http://localhost:8080/uploads/${product.pdfUrl}`} target="_blank" className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-100 transition-colors">
+                                            <a href={getAssetUrl(product.pdfUrl)} target="_blank" className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-100 transition-colors">
                                                 Download PDF
                                             </a>
                                         )}
@@ -117,5 +137,13 @@ export default function ProductsPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div></div>}>
+            <ProductsContent />
+        </Suspense>
     );
 }
