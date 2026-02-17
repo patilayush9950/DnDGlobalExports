@@ -7,7 +7,7 @@ backend/.settings/
 backend/.classpath
 backend/.project
 backend/.factorypath
-backend/data/
+# backend/data/
 
 ############################
 # Frontend (Next.js)
@@ -17,7 +17,7 @@ frontend/.next/
 frontend/out/
 frontend/build/
 frontend/.vercel
-frontend/.env*
+# frontend/.env*
 frontend/*.log
 
 ############################
