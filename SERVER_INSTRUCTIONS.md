@@ -182,4 +182,44 @@ Since you are using `systemd` and `pm2`, follow these steps to make your app run
     pm2 save
     ```
 
+## 8. Clean Re-installation (Fresh Start)
+
+If you want to ensure your server has the **exact** same state as your local machine (including database and uploads), follow these steps to remove the old code and start fresh.
+
+**1. Stop Services:**
+```bash
+sudo systemctl stop dnd-backend
+pm2 delete dnd-frontend
+```
+
+**2. Backup Old Code (Optional):**
+```bash
+cd /var/dndglobal/
+mv DnDGlobalExports DnDGlobalExports_backup_$(date +%F)
+```
+
+**3. Clone Fresh Repository:**
+```bash
+git clone https://github.com/patilayush9950/DnDGlobalExports.git
+cd DnDGlobalExports
+```
+
+**4. Start Backend:**
+```bash
+cd backend
+./run_locally.sh  # Builds the JAR
+sudo systemctl daemon-reload
+sudo systemctl start dnd-backend
+```
+
+**5. Start Frontend:**
+```bash
+cd ../frontend
+npm install
+npm run build
+pm2 start npm --name "dnd-frontend" -- start
+pm2 save
+```
+
+
 
